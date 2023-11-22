@@ -172,7 +172,7 @@
 
 
     <!-- 在線顯示 -->
-    <div class="online_overlay">
+    <div class="online_overlay" id="onlineUsersList">
         <!-- 登出按钮 -->
         <button onclick="logout()" class="logout-button">登出</button>
     </div>
@@ -238,7 +238,7 @@
         function logout() {
             // 在此处执行登出操作，例如清除会话
             // 重定向到登出页面或执行其他必要的操作
-            window.location.href = 'login.html'; // 跳转到登出页面
+            window.location.href = 'login.php'; // 跳转到登出页面
         }
 
         

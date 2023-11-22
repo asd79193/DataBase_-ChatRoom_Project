@@ -1,3 +1,6 @@
+<?php session_start(); 
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -76,7 +79,7 @@
   </style>
 </head>
 
-<body>
+<body onload="displayErrorMessage()">
   <div id="login_box">
     <h1>Welcome</h1>
     <form action="Store_username.php" method="post" onsubmit="return redirectToAnotherPage()">
@@ -89,6 +92,18 @@
   </div>
 
   <script>
+    window.onload = function() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const errorMessage = urlParams.get('error_message');
+    if (errorMessage === 'password') {
+      alert("Password incorrect for the given username. Please try again.");
+      // 清除 URL 中的 error_message 參數
+      const url = new URL(window.location.href);
+      url.searchParams.delete('error_message');
+      window.history.replaceState({}, document.title, url);
+    }
+  };
 
    function redirectToAnotherPage() {
       const usernameInput = document.getElementById('usernameInput');
@@ -102,6 +117,8 @@
         return true;
       }
     }
+   
   </script>
+  
 </body>
 </html>

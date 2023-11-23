@@ -79,7 +79,7 @@
   </style>
 </head>
 
-<body onload="displayErrorMessage()">
+<body>
   <div id="login_box">
     <h1>Welcome</h1>
     <form action="Store_username.php" method="post" onsubmit="return redirectToAnotherPage()">

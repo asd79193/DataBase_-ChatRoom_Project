@@ -1,4 +1,6 @@
-<?php session_start(); ?>
+
+<?php session_start(); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,6 +88,7 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5); /* 这里的 rgba 值设置了半透明的黑色背景 */
         }
+
         /* 輸入對話顯示區塊 */
         .input_overlay {
             position: absolute;
@@ -148,6 +151,27 @@
             background-color: RGB(33, 47, 61); /* 鼠标悬停时的按钮背景颜色 */
         }
 
+        #onlineUsersList p {
+        color: white; /* 文字顏色 */
+        font-size: 22px; /* 文字大小 */
+        font-family: Arial, sans-serif; /* 字體 */
+        position: absolute;
+        top: 40px; /* 調整垂直位置 */
+        left: 22px; /* 調整水平位置 */
+        margin: 10px; /* 调整每个 p 元素之间的水平间距 */
+        font-weight: bold; /* 可選：使用粗體以增加可讀性 */
+        }
+
+        #onlineCount{
+           color: white; 
+           position: absolute; 
+           top: 2px; /* 調整垂直位置 */
+           left: 120px;
+           font-size: 22px; /* 文字大小 */
+           font-family: Arial, sans-serif; /* 字體 */
+        }
+
+
 
 
     </style>
@@ -172,16 +196,19 @@
 
 
     <!-- 在線顯示 -->
-    <div class="online_overlay" id="onlineUsersList">
-        <!-- 登出按钮 -->
-        <button onclick="logout()" class="logout-button">登出</button>
-    </div>
-    <h2>在線列表</h2>
+    <div class="online_overlay" id="user_show"></div>
+    
+     <!-- 登出按钮 -->  
+     <button onclick="logout()" class="logout-button">登出</button>
+        <h2>在線列表</h2>
+        <p id="onlineCount"></p>
+        <div id="onlineUsersList"></div>
 
     <script>
 
         window.onload = function() {
         document.getElementById('messageInput').focus();
+        displayOnlineUsers(); // Call the function to display online users when the page loads
         };
 
         function sendMessage() {
@@ -228,6 +255,7 @@
                 }, 500); // 模拟延迟接收消息，以便测试 */
             }
         }
+
         function handleKeyDown(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault(); // 防止换行
@@ -235,11 +263,68 @@
             }
         }
 
+       // 顯示在線用戶列表
+    function displayOnlineUsers() {
+        fetch('Show_username.php')
+            .then(response => response.json())
+            .then(data => {
+            const onlineUsersContainer = document.getElementById('onlineUsersList');
+            onlineUsersContainer.innerHTML = ''; // 清空在線用戶列表區域
+            data.forEach(username => {
+                const usernameElement = document.createElement('p');
+                usernameElement.textContent = `${username} 在線中`;
+                onlineUsersContainer.appendChild(usernameElement);
+
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching online users:', error);
+        });
+    }
+
+    // 調用顯示在線用戶列表的函數
+    displayOnlineUsers();
+
+    function fetchOnlineUserCount() {
+    fetch('getOnlineCount.php')
+        .then(response => response.json())
+        .then(data => {
+            // 在页面中显示在线用户数量
+            const onlineCountElement = document.getElementById('onlineCount');
+            onlineCountElement.textContent = `(${data.onlineCount})`;
+        })
+        .catch(error => {
+            console.error('Error fetching online user count:', error);
+        });
+    }
+
+    // 调用这个函数来获取在线用户数量
+    fetchOnlineUserCount();
+
+
+
+
         function logout() {
-            // 在此处执行登出操作，例如清除会话
-            // 重定向到登出页面或执行其他必要的操作
-            window.location.href = 'login.php'; // 跳转到登出页面
+           // 发送 AJAX 请求
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // 如果请求成功，可以进行一些处理，例如跳转到登录页
+                window.location.href = 'login.php'; // 跳转到登录页
+            } else {
+                // 处理请求失败的情况
+                console.error('Logout request failed.');
+            }
         }
+        };
+        // 发送 POST 请求到后端 PHP 文件，将用户状态标记为 0
+        xhr.open('POST', 'update_status.php'); // update_status.php 是你要处理登出逻辑的后端 PHP 文件
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send('user_id=<?php echo $_SESSION['user_id']; ?>&state_number=0'); // 发送用户 ID 和状态值
+    }
+
+
 
         
     </script>

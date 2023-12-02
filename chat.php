@@ -151,15 +151,24 @@
             background-color: RGB(33, 47, 61); /* 鼠标悬停时的按钮背景颜色 */
         }
 
+        #onlineUsersList {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 0; /* 如果需要，可以移除左边距 */
+        margin-top: 70px; /* 调整元素距离顶部的距离 */
+        margin-left:20px
+        }
+
         #onlineUsersList p {
         color: white; /* 文字顏色 */
         font-size: 22px; /* 文字大小 */
         font-family: Arial, sans-serif; /* 字體 */
-        position: absolute;
         top: 40px; /* 調整垂直位置 */
         left: 22px; /* 調整水平位置 */
-        margin: 10px; /* 调整每个 p 元素之间的水平间距 */
+        margin: 0px; /* 调整每个 p 元素之间的水平间距 */
         font-weight: bold; /* 可選：使用粗體以增加可讀性 */
+        
         }
 
         #onlineCount{
@@ -183,6 +192,7 @@
         // 在这里使用 username 变量进行需要的操作
         console.log(username); // 作为示例，将用户名输出到控制台
     </script>
+  
 
     <!-- 聊天框(顯示) -->
     <div class="chat_overlay" id="chatMessages"></div>
@@ -196,64 +206,118 @@
 
 
     <!-- 在線顯示 -->
-    <div class="online_overlay" id="user_show"></div>
+    <div class="online_overlay" id="user_show">
+    <div id="onlineUsersList"></div>
+    </div>
     
      <!-- 登出按钮 -->  
      <button onclick="logout()" class="logout-button">登出</button>
         <h2>在線列表</h2>
         <p id="onlineCount"></p>
-        <div id="onlineUsersList"></div>
+        
 
     <script>
 
         window.onload = function() {
         document.getElementById('messageInput').focus();
         displayOnlineUsers(); // Call the function to display online users when the page loads
-        };
+        };        
 
-        function sendMessage() {
+	    function sendMessage() {
+            const user_id = "<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : ''; ?>";
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
 
-           const messageInput = document.getElementById('messageInput');
-           const message = messageInput.value.trim();
+        if (message !== '') {
+            const currentTime = new Date().toISOString(); // 獲取當前時間
+            const data = {
+                user_id: user_id,
+                message: message,
+                timestamp: currentTime
+            };
 
-            if (message !== '') {
-                const chatMessages = document.getElementById('chatMessages');
-                const newMessageContainer = document.createElement('div');
-                newMessageContainer.classList.add('message', 'sent');
-
-                // 创建包含用户名的元素
-                const usernameElement = document.createElement('div');
-                usernameElement.classList.add('username-container'); // 新添加的类名
-                usernameElement.textContent = username; // 直接使用之前定义的 username 变量
-                // 将用户名元素添加到消息容器中
-                chatMessages.appendChild(usernameElement); // 將用户名元素添加到聊天框的上方
-
-                // 将用户名元素添加到消息容器中
-                newMessageContainer.appendChild(usernameElement); // 将用户名元素添加到消息容器中
-
-
-
-                const newMessage = document.createElement('div');
-                newMessage.classList.add('bubble');
-                newMessage.textContent = message;
-                newMessageContainer.appendChild(newMessage);
-                chatMessages.appendChild(newMessageContainer);
-                messageInput.value = ''; // 清空输入框
-                chatMessages.scrollTop = chatMessages.scrollHeight; // 滚动到底部显示最新消息
-
-                // 模拟接收到的消息
-                /*
-                setTimeout(function() {
-                    const receivedMessageContainer = document.createElement('div');
-                    receivedMessageContainer.classList.add('message', 'received');
-                    const receivedMessage = document.createElement('div');
-                    receivedMessage.classList.add('bubble');
-                    receivedMessage.textContent = "这是接收到的消息";
-                    receivedMessageContainer.appendChild(receivedMessage);
-                    chatMessages.appendChild(receivedMessageContainer);
-                    chatMessages.scrollTop = chatMessages.scrollHeight; // 滚动到底部显示最新消息
-                }, 500); // 模拟延迟接收消息，以便测试 */
+        fetch('save_message.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                // 在這裡可以處理成功的情況
+                console.log('Message sent successfully!');
+                // 清空輸入框
+                messageInput.value = '';
+            } else {
+                // 處理錯誤情況
+                throw new Error('Failed to send message.');
             }
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+        });
+    }
+           
+        //     const messageInput = document.getElementById('messageInput');
+        //    const message = messageInput.value.trim();
+
+        //     if (message !== '') {
+        //         const chatMessages = document.getElementById('chatMessages');
+        //         const newMessageContainer = document.createElement('div');
+        //         newMessageContainer.classList.add('message', 'sent');
+
+        //         // 创建包含用户名的元素
+        //         const usernameElement = document.createElement('div');
+        //         usernameElement.classList.add('username-container'); // 新添加的类名
+        //         usernameElement.textContent = username; // 直接使用之前定义的 username 变量
+        //         // 将用户名元素添加到消息容器中
+        //         chatMessages.appendChild(usernameElement); // 將用户名元素添加到聊天框的上方
+
+        //         // 将用户名元素添加到消息容器中
+        //         newMessageContainer.appendChild(usernameElement); // 将用户名元素添加到消息容器中
+
+        //         const newMessage = document.createElement('div');
+        //         newMessage.classList.add('bubble');
+        //         newMessage.textContent = message;
+        //         newMessageContainer.appendChild(newMessage);
+        //         chatMessages.appendChild(newMessageContainer);
+        //         messageInput.value = ''; // 清空输入框
+        //         chatMessages.scrollTop = chatMessages.scrollHeight; // 滚动到底部显示最新消息
+
+        //         // 發送消息內容到後端保存到資料庫
+        //         fetch('save_message.php', {
+        //         method: 'POST',
+        //         headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded',
+        //         },
+        //         body: `message=${encodeURIComponent(message)}`,
+        //         })
+        //         .then(response => response.text())
+        //         .then(contentId => {
+        //         // 在這裡可以使用返回的 contentId，做進一步的操作或存儲到需要的地方
+        //         console.log('Content ID:', contentId);
+        //         })
+        //         .catch(error => {
+        //         console.error('Error saving message:', error);
+        //         });
+
+                
+
+        //         // 模拟接收到的消息
+        //         /*
+        //         setTimeout(function() {
+        //             const receivedMessageContainer = document.createElement('div');
+        //             receivedMessageContainer.classList.add('message', 'received');
+        //             const receivedMessage = document.createElement('div');
+        //             receivedMessage.classList.add('bubble');
+        //             receivedMessage.textContent = "这是接收到的消息";
+        //             receivedMessageContainer.appendChild(receivedMessage);
+        //             chatMessages.appendChild(receivedMessageContainer);
+        //             chatMessages.scrollTop = chatMessages.scrollHeight; // 滚动到底部显示最新消息
+        //         }, 500); // 模拟延迟接收消息，以便测试 */
+        //     }
+
         }
 
         function handleKeyDown(event) {
@@ -262,9 +326,102 @@
                 sendMessage(); // 调用发送消息的函数
             }
         }
+        
+        //let currentScrollPosition = 0;
+        // Function to fetch and update chat messages
+        function fetchAndUpdateChat() {
+            fetch('save_message.php') // 確保這個路徑是正確的
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // 解析 JSON 回應
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                //console.log('Fetched data:', data); // 输出获取的数据
+                data.sort((a, b) => {
+                    return new Date(a.time) - new Date(b.time);
+                });
+
+            const chatMessages = document.getElementById('chatMessages');
+            const isUserAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop === chatMessages.clientHeight;
+            currentScrollPosition = chatMessages.scrollTop;
+
+            // Clear previous content
+            chatMessages.innerHTML = '';
+
+            // Loop through the fetched data and create message elements
+            data.forEach(message => {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('message');
+
+                const messageBubble = document.createElement('div');
+                messageBubble.classList.add('bubble');
+
+                const usernameElement = document.createElement('div');
+                usernameElement.classList.add('username-container'); // 新添加的类名
+                usernameElement.textContent = message.user_name; // Use the username from each message
+
+                messageBubble.textContent = message.message; // Assuming 'message' field contains the actual message
+
+                const user_id = "<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : ''; ?>";
+                // 检查消息的发送者是否是当前用户
+                const isCurrentUser = message.user_id === user_id
+                // Apply appropriate style based on message sender
+                if (isCurrentUser) {
+                    messageContainer.classList.add('message', 'sent');
+
+                } else {
+                    messageContainer.classList.add('message','received');
+                }
+
+                messageContainer.appendChild(usernameElement);
+                messageContainer.appendChild(messageBubble);
+                chatMessages.appendChild(messageContainer);
+            });
+
+            // Optionally, scroll to the bottom to show the latest messages
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            const username = data.length > 0 ? data[0].username : ''; // Get username from the first message if available
+            //console.log('Extracted username:', username); // 输出提取的用户名
+            // Add username to the chat box
+            addUsernameToChat(username);
+           
+                   
+        })
+        .catch(error => {
+            console.error('Error fetching or updating messages:', error);
+        });
+}
+
+        // Function to add username element to chat box
+        function addUsernameToChat(username) {
+        // 创建包含用户名的元素
+    
+        const usernameElement = document.createElement('div');
+        usernameElement.classList.add('username-container'); // 新添加的类名
+        usernameElement.textContent = username; // 直接使用传入的用户名变量
+
+        // 将用户名元素添加到消息容器中
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.insertBefore(usernameElement, chatMessages.firstChild); // 将用户名元素添加到聊天框的上方
+        }
+
+        // Function to continuously update chat every 5 seconds
+        function startChatUpdates() {
+        fetchAndUpdateChat(); // Fetch initial messages
+
+        // Update chat messages every 5 seconds (adjust the interval as needed)
+        setInterval(fetchAndUpdateChat, 1000);
+        }
+
+        // When the page loads, start updating the chat
+        window.onload = startChatUpdates;
+
 
        // 顯示在線用戶列表
-    function displayOnlineUsers() {
+        function displayOnlineUsers() {
         fetch('Show_username.php')
             .then(response => response.json())
             .then(data => {
@@ -300,9 +457,9 @@
 
     // 调用这个函数来获取在线用户数量
     fetchOnlineUserCount();
-
-
-
+    //刷新在線列表
+    setInterval(fetchOnlineUserCount, 100);
+    setInterval(displayOnlineUsers, 100);
 
         function logout() {
            // 发送 AJAX 请求
@@ -324,7 +481,21 @@
         xhr.send('user_id=<?php echo $_SESSION['user_id']; ?>&state_number=0'); // 发送用户 ID 和状态值
     }
 
+//     window.addEventListener('unload', function(event) {
+//     // 發送 AJAX 請求以登出用戶
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', 'update_status.php');
+//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//     xhr.send('user_id=<?php echo $_SESSION['user_id']; ?>&state_number=0');
+// });
 
+//     window.addEventListener('beforeunload', function(event) {
+//     // 在刷新時將狀態設為 1
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', 'update_status.php');
+//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//     xhr.send('user_id=<?php echo $_SESSION['user_id']; ?>&state_number=1');
+// });
 
         
     </script>

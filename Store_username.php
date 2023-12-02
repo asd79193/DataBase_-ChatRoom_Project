@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
     } else {
           // 新增新用戶並將 state_number 設置為 1
         $insert_sql = "INSERT INTO users (user_name, user_password, state_number) VALUES ('$username', '$password', 1)";
-        if ($conn->query($insert_sql) === TRUE) {
+        
         if ($conn->query($insert_sql) === TRUE) {
             $new_user_id = $conn->insert_id; // 获取新插入的记录的自增 ID
             $_SESSION['username'] = $username; // 使用新创建的用户名
@@ -55,7 +55,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
         }
     }
   }
-}
-
 
 ?>

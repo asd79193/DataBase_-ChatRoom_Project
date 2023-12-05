@@ -37,7 +37,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
             exit();
         }
     } else {
-          // 新增新用戶並將 state_number 設置為 1
+        //跳轉到註冊介面
+
+
+
+        // 新增新用戶並將 state_number 設置為 1(寫在註冊介面)
         $insert_sql = "INSERT INTO users (user_name, user_password, state_number) VALUES ('$username', '$password', 1)";
         
         if ($conn->query($insert_sql) === TRUE) {

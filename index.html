@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Chat Room</title>
+  <style>
+    body {
+      background: url('https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg') no-repeat;
+      background-size: 100% 130%;
+    }
+
+    #index_box {
+      width: 20%;
+      height: 400px;
+      background-color: #00000060;
+      margin: auto;
+      margin-top: 10%;
+      text-align: center;
+      border-radius: 10px;
+      padding: 50px 50px;
+    }
+
+    h1 {
+      color: #ffffff90;
+      margin-top: 5%;
+    }
+
+    h4 {
+      color: #ffffff90;
+      margin-top: 5%;
+    }
+
+    h3 {
+      color: #ffffff90;
+      margin-top: 5%;
+    }
+
+    #input_box {
+      margin-top: 5%;
+    }
+
+    span {
+      color: #fff;
+    }
+
+    input {
+      border: 0;
+      width: 60%;
+      font-size: 15px;
+      color: #fff;
+      background: transparent;
+      border-bottom: 2px solid #fff;
+      padding: 5px 10px;
+      outline: none;
+      margin-top: 10px;
+    }
+    .button-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10 20%; /* 调整左右间距 */
+    margin-top: 50px; /* 上边距 */
+    }
+
+    button {
+      margin-top: 50px;
+      margin: 0 10px; /* 按钮之间的间距 */
+      width: 60%;
+      height: 30px;
+      border-radius: 10px;
+      border: 0;
+      color: #fff;
+      text-align: center;
+      line-height: 30px;
+      font-size: 15px;
+      background-image: linear-gradient(to right, #30cfd0, #330867);
+    }
+
+    #sign_up {
+      margin-top: 45%;
+      margin-left: 60%;
+    }
+
+    a {
+      color: #b94648;
+    }
+
+    input[type="password"] {
+      -webkit-text-security: disc; /* 這將將文字改為黑點，隱藏密碼 */
+    }
+    
+  </style>
+</head>
+
+<body>
+<form method="post" >
+  <div id="index_box">
+    <h1>Chat Room</h1>
+      <div id="input_box">
+        <br>
+       <h3>Words weave like a rainbow<br>Emotions bloom within words<br><br></h3>
+       <h4>在這裡，字句飄蕩，心靈交織<br>構築著屬於我們的故事</h4>
+      </div>
+      <div class="button-container">
+      <button type="submit" formaction="login.php">Login</button><br>
+      <button type="submit" formaction="register.php">Register</button><br>
+    </div>
+  </div>
+</form>
+  
+</body>
+</html>

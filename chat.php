@@ -1,5 +1,14 @@
 
-<?php session_start(); 
+<?php 
+
+session_start(); 
+
+// 检查是否存在有效的会话
+if (!isset($_SESSION['user_id'])) {
+    // 重定向到登录页面
+    header('Location: index.html');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -180,9 +189,26 @@
            font-family: Arial, sans-serif; /* 字體 */
         }
 
-
-
-
+        /* 一鍵到底*/
+        .scroll-button {
+        width: 40px;
+        height: 40px;
+        background-image: url('image/down-arrow.png');
+        background-size: cover;
+        text-indent: -9999px;
+        border: none;
+        border-radius: 10px;
+        position: fixed; /* 以视口为基准进行定位 */
+        bottom: 60px; /* 距离底部的距离 */
+        right: 20px; /* 距离右侧的距离 */
+        z-index: 999; /* 可以调整按钮的层级 */
+        background-color: #D5DBDB; /* Background color */
+        cursor: pointer; /* Ensure pointer cursor */
+        transition: background-color 0.3s ease; /* Smooth transition */
+    }
+        .scroll-button:hover {
+        background-color: #737B7D; /* Change background color on hover */
+    }
     </style>
 </head>
 <body>
@@ -197,6 +223,9 @@
     <!-- 聊天框(顯示) -->
     <div class="chat_overlay" id="chatMessages"></div>
 
+    <!-- 一鍵到底 -->
+    <button id="scrollToBottomBtn" class="scroll-button" style="display: none;"></button>
+
 
     <!--聊天框(輸入)  -->
     <div class="input_overlay">
@@ -207,7 +236,7 @@
 
     <!-- 在線顯示 -->
     <div class="online_overlay" id="user_show">
-    <div id="onlineUsersList"></div>
+    <div id="onlineUsersList" style="max-height: 450px; overflow-y: auto;"></div>
     </div>
     
      <!-- 登出按钮 -->  
@@ -327,9 +356,11 @@
             }
         }
         
-        //let currentScrollPosition = 0;
+        let currentScrollPosition = null;
+        let wasScrolledToBottom = true;
         // Function to fetch and update chat messages
         function fetchAndUpdateChat() {
+
             fetch('save_message.php') // 確保這個路徑是正確的
             .then(response => {
                 if (response.ok) {
@@ -346,6 +377,9 @@
             const chatMessages = document.getElementById('chatMessages');
             const isUserAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop === chatMessages.clientHeight;
             currentScrollPosition = chatMessages.scrollTop;
+
+            // Store the current content height
+            const currentContentHeight = chatMessages.scrollHeight;
 
             // Clear previous content
             chatMessages.innerHTML = '';
@@ -379,21 +413,72 @@
                 messageContainer.appendChild(messageBubble);
                 chatMessages.appendChild(messageContainer);
             });
-
-            // Optionally, scroll to the bottom to show the latest messages
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
+            
             const username = data.length > 0 ? data[0].username : ''; // Get username from the first message if available
             //console.log('Extracted username:', username); // 输出提取的用户名
             // Add username to the chat box
             addUsernameToChat(username);
-           
+
+             // Calculate the new content height after appending messages
+             const newContentHeight = chatMessages.scrollHeight - currentContentHeight;
+
+            // Update the scroll position to retain the current view if not at the bottom
+            if (!wasScrolledToBottom) {
+                chatMessages.scrollTop += newContentHeight;
+            }
+
+            // Update wasScrolledToBottom based on the user's current position
+            wasScrolledToBottom = isUserAtBottom;
+
+            if (wasScrolledToBottom) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
                    
         })
         .catch(error => {
             console.error('Error fetching or updating messages:', error);
         });
 }
+
+    //     // Function to scroll to the bottom of the chat
+    //     function scrollToBottom() {
+    //     const chatMessages = document.getElementById('chatMessages');
+    //     chatMessages.scrollTop = chatMessages.scrollHeight;
+    // }
+
+    //     // Event listener for the scroll-to-bottom button
+    //     const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+    //     scrollToBottomBtn.addEventListener('click', scrollToBottom);
+
+
+ // Function to check scroll position and toggle button visibility
+function checkScrollPosition() {
+    const chatMessages = document.getElementById('chatMessages');
+    const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+
+    if (chatMessages.scrollTop<1100) { // Adjust this value as needed
+        scrollToBottomBtn.style.display = 'block';
+    } else {
+        scrollToBottomBtn.style.display = 'none';
+    }
+}
+
+    // Event listener for chat messages scrolling
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.addEventListener('scroll', checkScrollPosition);
+
+    // Function to scroll to the bottom of the chat
+    function scrollToBottom() {
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        document.getElementById('scrollToBottomBtn').style.display = 'none'; // Hide the button when scrolling to bottom
+}
+
+    // Event listener for the scroll-to-bottom button
+    const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+    scrollToBottomBtn.addEventListener('click', scrollToBottom);
+
 
         // Function to add username element to chat box
         function addUsernameToChat(username) {
@@ -413,31 +498,55 @@
         fetchAndUpdateChat(); // Fetch initial messages
 
         // Update chat messages every 5 seconds (adjust the interval as needed)
-        setInterval(fetchAndUpdateChat, 1000);
+        setInterval(fetchAndUpdateChat, 100);
         }
 
         // When the page loads, start updating the chat
         window.onload = startChatUpdates;
 
 
-       // 顯示在線用戶列表
-        function displayOnlineUsers() {
-        fetch('Show_username.php')
-            .then(response => response.json())
-            .then(data => {
+    //    // 顯示在線用戶列表
+    //     function displayOnlineUsers() {
+    //     fetch('Show_username.php')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //         const onlineUsersContainer = document.getElementById('onlineUsersList');
+    //         onlineUsersContainer.innerHTML = ''; // 清空在線用戶列表區域
+    //         data.forEach(username => {
+    //             const usernameElement = document.createElement('p');
+    //             usernameElement.textContent = `${username} 在線中`;
+    //             onlineUsersContainer.appendChild(usernameElement);
+
+    //         });
+    //     })
+    //     .catch(error => {
+    //         console.error('Error fetching online users:', error);
+    //     });
+    // }
+
+
+    // Function to display online users with a limited height and scrollbar
+    function displayOnlineUsers() {
+    fetch('Show_username.php')
+        .then(response => response.json())
+        .then(data => {
             const onlineUsersContainer = document.getElementById('onlineUsersList');
-            onlineUsersContainer.innerHTML = ''; // 清空在線用戶列表區域
-            data.forEach(username => {
+            onlineUsersContainer.innerHTML = ''; // Clear the online users list area
+
+            const maxUsersToShow = 100; // Maximum number of users to display
+            const usersToShow = data.slice(0, maxUsersToShow); // Get a limited number of users
+
+            usersToShow.forEach(username => {
                 const usernameElement = document.createElement('p');
                 usernameElement.textContent = `${username} 在線中`;
                 onlineUsersContainer.appendChild(usernameElement);
-
             });
         })
         .catch(error => {
             console.error('Error fetching online users:', error);
         });
     }
+
 
     // 調用顯示在線用戶列表的函數
     displayOnlineUsers();
@@ -461,25 +570,25 @@
     setInterval(fetchOnlineUserCount, 100);
     setInterval(displayOnlineUsers, 100);
 
-        function logout() {
-           // 发送 AJAX 请求
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                // 如果请求成功，可以进行一些处理，例如跳转到登录页
-                window.location.href = 'login.php'; // 跳转到登录页
-            } else {
-                // 处理请求失败的情况
-                console.error('Logout request failed.');
-            }
+    function logout() {
+    fetch('logout.php', {
+        method: 'POST', // 使用 POST 请求来触发登出操作
+        credentials: 'same-origin' // 确保发送请求时携带当前页面的认证信息
+    })
+    .then(response => {
+        if (response.ok) {
+            // 如果请求成功，重定向到登录页或者进行其他处理
+            window.location.href = 'index.html';
+        } else {
+            // 处理请求失败的情况
+            console.error('Logout request failed.');
         }
-        };
-        // 发送 POST 请求到后端 PHP 文件，将用户状态标记为 0
-        xhr.open('POST', 'update_status.php'); // update_status.php 是你要处理登出逻辑的后端 PHP 文件
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send('user_id=<?php echo $_SESSION['user_id']; ?>&state_number=0'); // 发送用户 ID 和状态值
-    }
+    })
+    .catch(error => {
+        console.error('Error during logout:', error);
+    });
+}
+
 
 //     window.addEventListener('unload', function(event) {
 //     // 發送 AJAX 請求以登出用戶

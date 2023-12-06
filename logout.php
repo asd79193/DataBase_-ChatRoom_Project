@@ -16,10 +16,9 @@ if ($conn->query($sql) === TRUE) {
     // 清除会话数据
     session_unset(); // 清除会话中的所有变量
     session_destroy(); // 销毁会话
-
     // 处理完登出逻辑后，可以根据需要重定向到其他页面或返回相应信息
     // 比如，重定向到登录页面
-    header('Location: index.html');
+    //header('Location: login.php');
     exit();
 } else {
     // 如果更新失败，可以做一些错误处理

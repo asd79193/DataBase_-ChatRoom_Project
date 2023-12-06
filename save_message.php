@@ -51,9 +51,24 @@ function getUsernameById($user_id) {
     }
 }
 
+function getUserIP() {
+    // Check for shared Internet/ISP IP
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        return $_SERVER['HTTP_CLIENT_IP'];
+    }
+    // Check for IP address from proxy/remote
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+}
+
 
 // 確認是否收到 POST 請求
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $userIP = getUserIP();
     // 解析來自前端的 JSON 資料
     $data = json_decode(file_get_contents("php://input"));
 
@@ -70,13 +85,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          $taiwanTimestamp = $date->format('Y-m-d H:i:s');
 
         // 處理資料庫插入操作
-        $insertSql = "INSERT INTO dialogue (user_id, message, time) VALUES (?, ?, ?)";
+        $insertSql = "INSERT INTO dialogue (user_id, message, time, IP) VALUES (?, ?, ?, ?)";
 
         // 使用預處理語句準備 SQL 語句
         $stmt = $conn->prepare($insertSql);
         if ($stmt) {
             // 綁定參數並執行語句
-            $stmt->bind_param("iss", $user_id, $message, $taiwanTimestamp);
+            $stmt->bind_param("isss", $user_id, $message, $taiwanTimestamp, $userIP);
             if ($stmt->execute()) {
                 // 插入成功
                 echo "Message inserted successfully!";

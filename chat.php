@@ -209,6 +209,18 @@ if (!isset($_SESSION['user_id'])) {
         .scroll-button:hover {
         background-color: #737B7D; /* Change background color on hover */
     }
+
+    /* 對話傳送時間*/
+    .message-time {
+    color: white; /* 設定時間文字顏色為白色 */
+    font-size: 12px; /* 調整時間文字大小 */
+    margin-bottom: 4px; /* 調整時間與訊息氣泡間距 */
+    margin-left: 10px;
+    margin-right: 10px;
+    display: block; /* 讓時間元素從上至下顯示 */
+    }
+
+
     </style>
 </head>
 <body>
@@ -392,6 +404,11 @@ if (!isset($_SESSION['user_id'])) {
                 const messageBubble = document.createElement('div');
                 messageBubble.classList.add('bubble');
 
+                const timeElement = document.createElement('span');
+                timeElement.classList.add('message-time'); // Add a class for styling time
+                const messageTime = new Date(message.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                timeElement.textContent = messageTime;
+
                 const usernameElement = document.createElement('div');
                 usernameElement.classList.add('username-container'); // 新添加的类名
                 usernameElement.textContent = message.user_name; // Use the username from each message
@@ -404,13 +421,17 @@ if (!isset($_SESSION['user_id'])) {
                 // Apply appropriate style based on message sender
                 if (isCurrentUser) {
                     messageContainer.classList.add('message', 'sent');
-
+                    messageContainer.appendChild(usernameElement);
+                    messageContainer.appendChild(messageBubble);
+                    messageContainer.appendChild(timeElement); // Move the time to the other side
+                    
                 } else {
                     messageContainer.classList.add('message','received');
+                    messageContainer.appendChild(timeElement); // For received messages, time is on the original side
+                    messageContainer.appendChild(usernameElement);
+                    messageContainer.appendChild(messageBubble);
                 }
 
-                messageContainer.appendChild(usernameElement);
-                messageContainer.appendChild(messageBubble);
                 chatMessages.appendChild(messageContainer);
             });
             
@@ -578,7 +599,7 @@ function checkScrollPosition() {
     .then(response => {
         if (response.ok) {
             // 如果请求成功，重定向到登录页或者进行其他处理
-            window.location.href = 'index.html';
+            window.location.href = 'login.php';
         } else {
             // 处理请求失败的情况
             console.error('Logout request failed.');

@@ -61,6 +61,7 @@
       line-height: 30px;
       font-size: 15px;
       background-image: linear-gradient(to right, #30cfd0, #330867);
+      
     }
 
     #sign_up {
@@ -75,6 +76,28 @@
     input[type="password"] {
       -webkit-text-security: disc; /* 這將將文字改為黑點，隱藏密碼 */
     }
+  .return-button {
+  width: 50px;
+  height: 40px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.3s;
+  margin-top: 100px;
+  margin-right: -270px;
+  
+}
+
+.return-button:active {
+  transform: scale(0.95);
+  /* 
+  可以根據需要調整按鈕點擊時的縮放比例 */
+}
+.login-button:active {
+  transform: scale(0.95);
+  /* 可以根據需要調整按鈕點擊時的縮放比例 */
+}
+
     
   </style>
 </head>
@@ -87,11 +110,21 @@
         <input type="text" id="usernameInput" name="username" placeholder="UserName">
         <input type="password" id="passwordInput" name="userpassword" placeholder="Password">
       </div>
-      <button type="submit">Login</button><br>
+      <button type="submit" class="login-button">Login</button><br>
     </form>
+    <button class="return-button" id="return-button">Back</button><br>
   </div>
 
   <script>
+    // 找到返回按鈕
+    const returnButton = document.getElementById('return-button');
+
+    // 添加點擊事件監聽器
+    returnButton.addEventListener('click', function() {
+      // 返回到 index.html
+      window.location.href = 'index.html';
+    });
+
     window.onload = function() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);

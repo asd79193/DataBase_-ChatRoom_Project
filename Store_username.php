@@ -38,25 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
         }
     } else {
         //跳轉到註冊介面
+        header('Location: register.php');
+        exit();
 
 
-
-        // 新增新用戶並將 state_number 設置為 1(寫在註冊介面)
-        $insert_sql = "INSERT INTO users (user_name, user_password, state_number) VALUES ('$username', '$password', 1)";
         
-        if ($conn->query($insert_sql) === TRUE) {
-            $new_user_id = $conn->insert_id; // 获取新插入的记录的自增 ID
-            $_SESSION['username'] = $username; // 使用新创建的用户名
-            $_SESSION['user_id'] = $new_user_id; // 使用新创建的用户 ID
-            // 如果需要其他信息也可以从表单获取或者进行其他操作
-
-            echo "New user created successfully. User ID is: " . $new_user_id;
-            header('Location: chat.php');
-            exit();
-        } else {
-            echo "Error: " . $insert_sql . "<br>" . $conn->error;
-            // 可以进行其他的错误处理或者重新定向
-        }
     }
   }
 

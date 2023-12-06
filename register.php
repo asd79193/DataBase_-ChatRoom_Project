@@ -77,15 +77,26 @@
     }
     
   </style>
+  <script>
+    // 在页面加载时检查错误参数并显示警告框
+    window.onload = function() {
+      var error = "<?php echo isset($_GET['error']) ? $_GET['error'] : ''; ?>";
+      if (error === "password_mismatch") {
+        alert("Password incorrect for the given username. Please try again.");
+      }
+    };
+  </script>
 </head>
 
 <body>
   <div id="register_box">
     <h1>Register</h1>
+    <form action="create_user.php" method="post" >
       <div id="input_box">
-        <input type="text" id="usernameInput" name="username" placeholder="UserName">
+        <input type="text" id="usernameInput" name="username" placeholder="UserName" value="<?php echo isset($_GET['username']) ? htmlspecialchars($_GET['username']) : ''; ?>">
         <input type="password" id="passwordInput" name="userpassword" placeholder="Password">
         <input type="password" id="doublecheckpasswordInput" name="doublecheckpassword" placeholder="VerifyPassword">
+        <div id="passwordMismatch" style="display: none; color: red;">Passwords do not match. Please try again.</div>
       </div>
       <button type="submit">Welcome</button><br>
     </form>

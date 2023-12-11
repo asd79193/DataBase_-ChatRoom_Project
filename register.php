@@ -81,7 +81,7 @@
     height: 40px;
     border-radius: 5px;
     font-size: 16px;
-    cursor: pointer;
+    cursor: default;
     transition: transform 0.3s;
     margin-top: 70px;
     margin-right: -270px;
@@ -104,7 +104,7 @@
     window.onload = function() {
       var error = "<?php echo isset($_GET['error']) ? $_GET['error'] : ''; ?>";
       if (error === "password_mismatch") {
-        alert("Password incorrect for the given username. Please try again.");
+        alert("Parameter error. Please check your input and try again.");
       }
     };
   </script>
@@ -126,6 +126,26 @@
   </div>
 
   <script>
+
+     // 在提交表單之前檢查是否有空輸入框
+     document.querySelector('form').addEventListener('submit', function(event) {
+    const usernameInput = document.getElementById('usernameInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const doubleCheckPasswordInput = document.getElementById('doublecheckpasswordInput');
+    const passwordMismatch = document.getElementById('passwordMismatch');
+
+    if (usernameInput.value === '' || passwordInput.value === '' || doubleCheckPasswordInput.value === '') {
+      event.preventDefault(); // 阻止表單提交
+      alert('Please fill in the information to complete registration'); // 顯示錯誤警告
+    }
+
+    if (passwordInput.value !== doubleCheckPasswordInput.value) {
+      event.preventDefault(); // 阻止表單提交
+      passwordInput.value = ''; // 清空密码输入框
+      doubleCheckPasswordInput.value = ''; // 清空确认密码输入框
+      alert("Password incorrect for the given username. Please try again.");
+    }
+    });
       // 找到返回按鈕
     const returnButton = document.getElementById('return-button');
 

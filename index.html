@@ -77,6 +77,11 @@
       font-size: 15px;
       background-image: linear-gradient(to right, #30cfd0, #330867);
     }
+    .return-button:active {
+    transform: scale(0.95);
+  /* 
+  可以根據需要調整按鈕點擊時的縮放比例 */
+  }
 
     #sign_up {
       margin-top: 45%;
@@ -104,8 +109,8 @@
        <h4>在這裡，字句飄蕩，心靈交織<br>構築著屬於我們的故事</h4>
       </div>
       <div class="button-container">
-      <button type="submit" formaction="login.php">Login</button><br>
-      <button type="submit" formaction="register.php">Register</button><br>
+      <button type="submit" class="return-button" formaction="login.php">Login</button><br>
+      <button type="submit" class="return-button" formaction="register.php">Register</button><br>
     </div>
   </div>
 </form>

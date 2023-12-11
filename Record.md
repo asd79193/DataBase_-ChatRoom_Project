@@ -66,12 +66,15 @@ update_status.php //用戶狀態更新
 //紀錄IP
 //對話顯示傳送消息的時間
 //登出後轉到login.php
+//index.html button動畫調整
 
 前:
 
+完成註冊應該跳出完成註冊的顯示框，按下確認再返回登陸介面
 debug 對話框一鍵到底button如果螢幕長度太長會自己先顯示 不合理
-debug 註冊&登錄的back button位置要固定好 不然可能會亂跑
-哪段到哪段是什麼時候的對話(ex:Today Yesterday Tue,11/16(星期,日期)) (對話要新增日期資料庫 要抓取當日日期)
+debug 註冊&登錄的back登錄的back button位置要固定好 不然可能會亂跑
+登陸輸錯密碼 應該保留用戶名 跳出錯誤警告框但不跳轉介面
+
 
 未完成(如果太閒的話):
 
@@ -88,6 +91,7 @@ debug 註冊&登錄的back button位置要固定好 不然可能會亂跑
 user_id歸0
 掛機30分鐘自動登出 or 進入休眠介面
 關閉介面state_number=0
+哪段到哪段是什麼時候的對話(ex:Today Yesterday Tue,11/16(星期,日期)) (對話要新增日期資料庫 要抓取當日日期)
 
 
 魔王(我嫌麻煩):

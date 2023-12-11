@@ -81,7 +81,7 @@
   height: 40px;
   border-radius: 5px;
   font-size: 16px;
-  cursor: pointer;
+  cursor: default;
   transition: transform 0.3s;
   margin-top: 100px;
   margin-right: -270px;
@@ -107,7 +107,7 @@
     <h1>Welcome</h1>
     <form action="Store_username.php" method="post" onsubmit="return redirectToAnotherPage()">
       <div id="input_box">
-        <input type="text" id="usernameInput" name="username" placeholder="UserName">
+        <input type="text" id="usernameInput" name="username" placeholder="UserName" value="<?php echo isset($_GET['username']) ? htmlspecialchars($_GET['username']) : ''; ?>">
         <input type="password" id="passwordInput" name="userpassword" placeholder="Password">
       </div>
       <button type="submit" class="login-button">Login</button><br>

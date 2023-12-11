@@ -25,10 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
             echo "Error: " . $insert_sql . "<br>" . $conn->error;
             // 可以进行其他的错误处理或者重新定向
         }
-    } else {
-        // 密码不匹配，重定向到注册页面并传递错误参数和用户名
-        header('Location: register.php?error=password_mismatch&username=' . urlencode($username));
-        exit();
+
 
     }
 }

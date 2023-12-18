@@ -146,6 +146,13 @@
       alert("Password incorrect for the given username. Please try again.");
     }
     });
+
+    window.onload = function() {
+    var error = "<?php echo isset($_GET['error']) ? $_GET['error'] : ''; ?>";
+    if (error === "username_exists") {
+        alert("Username already exists. Please choose a different username.");
+    }
+    };
       // 找到返回按鈕
     const returnButton = document.getElementById('return-button');
 

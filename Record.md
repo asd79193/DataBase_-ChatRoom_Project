@@ -68,7 +68,11 @@ update_status.php //用戶狀態更新
 //登出後轉到login.php
 //index.html button動畫調整
 
+
+//註冊用戶名不能和資料庫一樣
+
 前:
+
 
 完成註冊應該跳出完成註冊的顯示框，按下確認再返回登陸介面
 debug 對話框一鍵到底button如果螢幕長度太長會自己先顯示 不合理
